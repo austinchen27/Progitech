@@ -19,7 +19,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "productImages")
-public class ProductImages {
+public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -47,7 +47,7 @@ public class ProductImages {
     @JoinColumn(name="product_id")
     private ItemProduct product;
 
-    public ProductImages() {}
+    public ProductImage() {}
 
     public Long getId() {
         return id;

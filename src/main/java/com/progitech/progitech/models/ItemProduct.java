@@ -26,9 +26,12 @@ public class ItemProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "name is required")
+    @NotEmpty(message = "Name is required")
     @Size(min = 2, max = 255, message = "name must be at least 2 characters long")
     private String name;
+
+    @NotEmpty(message = "Description is required")
+    private String description;
 
     @NotEmpty
     private String stripeProductId;
@@ -44,7 +47,7 @@ public class ItemProduct {
     
     @Column(updatable=false)
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private List<ProductImages> images;
+    private List<ProductImage> images;
 
     @PrePersist
     protected void onCreate() {
@@ -98,11 +101,11 @@ public class ItemProduct {
         this.updatedAt = updatedAt;
     }
 
-    public List<ProductImages> getImages() {
+    public List<ProductImage> getImages() {
         return images;
     }
 
-    public void setImages(List<ProductImages> images) {
+    public void setImages(List<ProductImage> images) {
         this.images = images;
     }
 
@@ -112,5 +115,13 @@ public class ItemProduct {
 
     public void setPrice(ItemPrice price) {
         this.price = price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

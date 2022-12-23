@@ -39,12 +39,9 @@
 	gap: 3%;
 }
 
-#products-section {
-	display: flex;
-	justify-content: center;
+.border-black {
 	border: 1px solid black;
 	width: 30%;
-	height: 40%;
 }
 
 #under-construction h5 {
