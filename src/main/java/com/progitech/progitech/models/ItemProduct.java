@@ -33,7 +33,6 @@ public class ItemProduct {
     @NotEmpty(message = "Description is required")
     private String description;
 
-    @NotEmpty
     private String stripeProductId;
 
     @Column(updatable = false)

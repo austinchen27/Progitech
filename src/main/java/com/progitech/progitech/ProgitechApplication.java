@@ -15,5 +15,4 @@ public class ProgitechApplication {
         // Austin
         // Stripe.apiKey = "sk_test_51MI05QAuES7U6Uaxj2uvtzkQC7BFjpaMMF0uoYQ1fRELikIrN8G9HSdXXgbLh2q5IRPORBhBvxm5yeJbhkqDm2Da00ddYFxWIn";
 	}
-
 }

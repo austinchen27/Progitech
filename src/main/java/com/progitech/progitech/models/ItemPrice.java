@@ -15,6 +15,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -25,11 +26,10 @@ public class ItemPrice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "name is required")
+    @NotNull(message = "Price is required")
     @Min(value = 1, message = "Price must be at least $1.00")
     private Double unitAmount;
 
-    @NotEmpty
     private String stripePriceId;
 
     @Column(updatable = false)
