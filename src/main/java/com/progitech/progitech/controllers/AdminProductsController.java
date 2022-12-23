@@ -1,5 +1,6 @@
 package com.progitech.progitech.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import com.progitech.progitech.models.ItemProduct;
 import com.progitech.progitech.models.ProductImage;
 import com.progitech.progitech.services.ItemPriceService;
 import com.progitech.progitech.services.ItemProductService;
+import com.progitech.progitech.services.ProductImageService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Price;
 import com.stripe.model.Product;
@@ -33,12 +35,15 @@ public class AdminProductsController {
     @Autowired
     ItemPriceService priceService;
 
+    @Autowired
+    ProductImageService imageService;
+
     // Admin Access - Products
     @GetMapping("/private/admin/products")
     public String adminProducts(Model model, HttpSession session) {
         model.addAttribute("product", new ItemProduct());
         model.addAttribute("price", new ItemPrice());
-        model.addAttribute("image", new ProductImage());
+        model.addAttribute("newImage", new ProductImage());
 
         model.addAttribute("allProducts", productService.allProducts());
         return "adminproducts.jsp";
@@ -48,10 +53,10 @@ public class AdminProductsController {
     public String createProduct(@Valid @ModelAttribute("product") ItemProduct product,
             BindingResult result, @RequestParam("name") String name, Model model) throws StripeException {
 
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             model.addAttribute("product", product);
             model.addAttribute("price", new ItemPrice());
-            model.addAttribute("image", new ProductImage());
+            model.addAttribute("newImage", new ProductImage());
             return "adminproducts.jsp";
         }
 
@@ -60,7 +65,7 @@ public class AdminProductsController {
         params.put("name", name);
 
         Product stripeProduct = Product.create(params);
-        
+
         // creating product in our database
         product.setStripeProductId(stripeProduct.getId());
         productService.save(product);
@@ -70,13 +75,21 @@ public class AdminProductsController {
 
     @PostMapping("/price/create")
     public String createPrice(@Valid @ModelAttribute("price") ItemPrice price,
-    BindingResult result, @RequestParam("unitAmount") String unitAmount, Model model) throws StripeException{
+            BindingResult result, @RequestParam("unitAmount") String unitAmount, Model model) throws StripeException {
 
+        if (result.hasErrors()) {
+            model.addAttribute("price", price);
+            model.addAttribute("product", new ItemProduct());
+            model.addAttribute("newImage", new ProductImage());
+            model.addAttribute("allProducts", productService.allProducts());
+            return "adminproducts.jsp";
+        }
+        // converting price to send to stripe
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(unitAmount);
-        for(int i = 0; i < stringBuilder.length(); i++){
-            if(stringBuilder.charAt(i) == '.'){
+        for (int i = 0; i < stringBuilder.length(); i++) {
+            if (stringBuilder.charAt(i) == '.' || stringBuilder.charAt(i) == '$' || stringBuilder.charAt(i) == ',') {
                 stringBuilder.deleteCharAt(i);
             }
         }
@@ -84,6 +97,7 @@ public class AdminProductsController {
 
         ItemPrice newPrice = priceService.save(price);
 
+        // saving in stripe
         Map<String, Object> params = new HashMap<>();
         params.put("unit_amount", Integer.parseInt(stringBuilder.toString()));
         params.put("currency", "usd");
@@ -92,7 +106,36 @@ public class AdminProductsController {
         Price stripePrice = Price.create(params);
 
         newPrice.setStripePriceId(stripePrice.getId());
+
+        // saving in our database
         priceService.save(newPrice);
+        return "redirect:/private/admin/products";
+    }
+
+    @PostMapping("/image/add")
+    public String addImage(@Valid @ModelAttribute("newImage") ProductImage image,
+            BindingResult result, Model model) throws StripeException {
+        
+        if (result.hasErrors()) {
+            model.addAttribute("newImage", image);
+            model.addAttribute("product", new ItemProduct());
+            model.addAttribute("price", new ItemPrice());
+            model.addAttribute("allProducts", productService.allProducts());
+            return "adminproducts.jsp";
+        }
+        // getting stripe price id
+        ProductImage newImg = imageService.save(image);
+        Product product = Product.retrieve(productService.getOne(newImg.getProduct().getId()).getStripeProductId());
+
+        // updating product
+        ArrayList<String> images = new ArrayList<>();
+        images.add(newImg.getImage());
+        Map<String, Object> params = new HashMap<>();
+        params.put("images", images);
+
+        product.update(params);
+
+        // saving img in our database
         return "redirect:/private/admin/products";
     }
 }

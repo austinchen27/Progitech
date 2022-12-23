@@ -83,7 +83,7 @@
                 </form:form>
 
                 <h3>Add A Image</h3>
-                <form:form action="/image/add" method="post" modelAttribute="image">
+                <form:form action="/image/add" method="post" modelAttribute="newImage">
                     <form:errors class="text-danger" path="image"></form:errors>
                     <div>
                         <p>Url for an image:</p>
@@ -92,11 +92,9 @@
                     <div>
                         <form:select path="product">
                             <c:forEach var="oneProduct" items="${allProducts}">
-                                <c:if test="${oneProduct.price == null}">
                                     <option value="${oneProduct.id}">
                                         <c:out value="${oneProduct.name}"></c:out>
                                     </option>
-                                </c:if>
                             </c:forEach>
                         </form:select>
                     </div>
