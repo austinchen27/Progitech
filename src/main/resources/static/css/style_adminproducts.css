@@ -29,7 +29,7 @@
 	text-decoration: none;
 }
 
-/* Products Control */
+/* Admin Products Control */
 
 #products-section {
 	display: flex;
@@ -39,7 +39,7 @@
 	gap: 3%;
 }
 
-#products-section p {
+#products-section {
 	display: flex;
 	justify-content: center;
 	border: 1px solid black;
