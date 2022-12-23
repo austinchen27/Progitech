@@ -1,7 +1,6 @@
 package com.progitech.progitech.models;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,29 +8,29 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name="products")
-public class ItemProduct {
+@Table(name="prices")
+public class ItemPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotEmpty(message = "name is required")
-    @Size(min = 2, max = 255, message = "name must be at least 2 characters long")
-    private String name;
+    @Min(value = 1, message = "Price must be at least $1.00")
+    private Double unitAmount;
 
     @NotEmpty
-    private String stripeProductId;
+    private String stripePriceId;
 
     @Column(updatable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -39,12 +38,9 @@ public class ItemProduct {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date updatedAt;
 
-    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
-    private ItemPrice price;
-    
-    @Column(updatable=false)
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private List<ProductImages> images;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private ItemProduct product;
 
     @PrePersist
     protected void onCreate() {
@@ -56,7 +52,7 @@ public class ItemProduct {
         this.updatedAt = new Date();
     }
 
-    public ItemProduct(){}
+    public ItemPrice(){}
 
     public Long getId() {
         return id;
@@ -66,20 +62,12 @@ public class ItemProduct {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Double getUnitAmount() {
+        return unitAmount;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getStripeProductId() {
-        return stripeProductId;
-    }
-
-    public void setStripeProductId(String stripeProductId) {
-        this.stripeProductId = stripeProductId;
+    public void setUnitAmount(Double unitAmount) {
+        this.unitAmount = unitAmount;
     }
 
     public Date getCreatedAt() {
@@ -98,19 +86,19 @@ public class ItemProduct {
         this.updatedAt = updatedAt;
     }
 
-    public List<ProductImages> getImages() {
-        return images;
+    public ItemProduct getProduct() {
+        return product;
     }
 
-    public void setImages(List<ProductImages> images) {
-        this.images = images;
+    public void setProduct(ItemProduct product) {
+        this.product = product;
     }
 
-    public ItemPrice getPrice() {
-        return price;
+    public String getStripePriceId() {
+        return stripePriceId;
     }
 
-    public void setPrice(ItemPrice price) {
-        this.price = price;
+    public void setStripePriceId(String stripePriceId) {
+        this.stripePriceId = stripePriceId;
     }
 }
