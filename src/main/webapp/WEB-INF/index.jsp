@@ -55,7 +55,7 @@
 				<a href="/">PROGITECH</a>
 			</div>
 			<div id="nav-bar-links" class="d-flex justify-content-around" style="width: 400px">
-				<p><a href="/shop">SHOP</a></p>
+				<p><a href="/shopnow">SHOP</a></p>
 				<p><a href="/learn">LEARN</a></p>
 				<p><a href="/business">BUSINESS</a></p>
 				<p><a href="/support">SUPPORT</a></p>
